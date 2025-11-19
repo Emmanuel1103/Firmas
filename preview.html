@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Previsualización de tu Firma</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #ffffff;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      color: #0a4e29;
+      margin-bottom: 25px;
+      font-weight: 700;
+    }
+
+    .card {
+      max-width: 650px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 18px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+      text-align: center;
+    }
+
+    .signature-preview {
+      width: 100%;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border: 2px solid #32a150;
+      background: white;
+    }
+
+    .instructions {
+      background: #aed4a7;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      text-align: left;
+      color: #0a4e29;
+      font-size: 15px;
+      border-left: 5px solid #32a150;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 15px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .btn-download {
+      background: #0a4e29;
+      color: white;
+    }
+
+    .btn-download:hover {
+      background: #073b1f;
+    }
+
+    .btn-back {
+      background: #244d26;
+      color: white;
+    }
+
+    .btn-back:hover {
+      background: #1c3c1d;
+    }
+
+    .btn-return-form {
+      background: #32a150;
+      color: white;
+    }
+
+    .btn-return-form:hover {
+      background: #278040;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Previsualización de tu Firma</h1>
+
+<div class="card">
+
+  <img id="signature-img" class="signature-preview" alt="Firma">
+
+  <div class="instructions">
+    <b>Instrucciones generales:</b><br>
+    Presiona el botón <b>"Descargar Firma"</b> y el archivo se guardará en tu dispositivo.
+    <br><br>
+    📱 En <b>iOS</b>, mantén presionada la imagen y selecciona <b>"Guardar en Fotos"</b>.
+    <br><br>
+    <b>¡Recuerda que necesitarás esta firma para completar el formulario de asistencia!<b/>
+  </div>
+
+  <a id="download-link" download="Firma.jpg">
+    <button class="btn btn-download">Descargar Firma (PC,ANDRIOD)</button>
+  </a>
+
+  <button class="btn btn-back" onclick="window.location.href='firma.html'">
+    Volver a firmar
+  </button>
+
+  <!-- NUEVO BOTÓN: VOLVER AL FORM -->
+  <button class="btn btn-return-form" onclick="volverAlFormulario()">
+    Llenar formulario de asistencia
+  </button>
+
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const imgData = params.get("img");
+
+document.getElementById("signature-img").src = imgData;
+document.getElementById("download-link").href = imgData;
+
+// Cambia la URL por la URL del formulario que quieras devolver
+function volverAlFormulario() {
+  window.location.href = "https://forms.office.com/r/Y587tcMmyY";
+}
+</script>
+
+</body>
+</html>

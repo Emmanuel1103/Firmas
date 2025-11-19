@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Firma Digital</title>
+
+<style>
+  body {
+    margin: 0;
+    padding: 20px;
+    background: #f5fdf5;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .container {
+    max-width: 650px;
+    margin: auto;
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 15px 45px rgba(0,0,0,0.12);
+  }
+
+  h1 {
+    text-align: center;
+    color: #0a4e29;
+  }
+
+  .canvas-wrapper {
+    background: #ffffff;
+    border: 3px solid #32a150;
+    border-radius: 14px;
+    padding: 12px;
+    margin-bottom: 15px;
+  }
+
+  canvas {
+    width: 100%;
+    height: 250px;
+    background: white;
+    border-radius: 10px;
+    border: 2px dashed #aed4a7;
+    touch-action: none;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    color: white;
+  }
+
+  .btn-clear { background: #244d26; }
+  .btn-clear:hover { background: #1c3c1d; }
+
+  .btn-next { background: #32a150; }
+  .btn-next:hover { background: #27843f; }
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>Captura tu Firma</h1>
+
+  <div class="canvas-wrapper">
+    <canvas id="signature"></canvas>
+  </div>
+
+  <button class="btn btn-clear" onclick="clearCanvas()">Limpiar</button>
+  <button class="btn btn-next" onclick="processSignature()">Continuar</button>
+</div>
+
+<script>
+const canvas = document.getElementById("signature");
+const ctx = canvas.getContext("2d");
+let drawing = false;
+let empty = true;
+
+function resize() {
+  const data = empty ? null : canvas.toDataURL();
+  const w = canvas.clientWidth;
+  canvas.width = w;
+  canvas.height = 250;
+
+  ctx.lineWidth = 3;
+  ctx.lineCap = "round";
+  ctx.strokeStyle = "#000";
+
+  if (data) {
+    const img = new Image();
+    img.onload = () => ctx.drawImage(img, 0, 0);
+    img.src = data;
+  }
+}
+resize();
+window.onresize = resize;
+
+// Drawing
+canvas.onmousedown = e => start(e);
+canvas.onmousemove = e => draw(e);
+canvas.onmouseup = () => end();
+
+canvas.addEventListener("touchstart", e => start(e.touches[0]));
+canvas.addEventListener("touchmove", e => draw(e.touches[0]));
+canvas.addEventListener("touchend", () => end());
+
+function start(e) {
+  drawing = true;
+  empty = false;
+  ctx.beginPath();
+  const r = canvas.getBoundingClientRect();
+  ctx.moveTo(e.clientX - r.left, e.clientY - r.top);
+}
+
+function end() {
+  drawing = false;
+  ctx.beginPath();
+}
+
+function draw(e) {
+  if (!drawing) return;
+  e.preventDefault();
+  const r = canvas.getBoundingClientRect();
+  ctx.lineTo(e.clientX - r.left, e.clientY - r.top);
+  ctx.stroke();
+}
+
+// Clear button
+function clearCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  empty = true;
+}
+
+// Convert → go to preview flow
+function processSignature() {
+  if (empty) {
+    alert("Por favor, dibuja tu firma primero.");
+    return;
+  }
+
+  const finalCanvas = document.createElement("canvas");
+  finalCanvas.width = canvas.width;
+  finalCanvas.height = canvas.height;
+  const fx = finalCanvas.getContext("2d");
+
+  fx.fillStyle = "#ffffff";
+  fx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+  fx.drawImage(canvas, 0, 0);
+
+  const img = finalCanvas.toDataURL("image/jpeg", 0.95);
+
+  window.location.href = "preview.html?img=" + encodeURIComponent(img);
+}
+</script>
+
+</body>
+</html>

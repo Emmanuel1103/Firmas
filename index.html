@@ -1,349 +1,209 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Captura de Firma Digital</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Asistencia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #00974f 0%, #00b35c 100%);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 15px;
-    }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            color: red;
+        }
 
-    .container {
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      padding: 30px;
-      max-width: 650px;
-      width: 100%;
-    }
+        .container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 48px;
+            max-width: 600px;
+            width: 100%;
+        }
 
-    h1 {
-      color: #00974f;
-      text-align: center;
-      margin-bottom: 8px;
-      font-size: 2em;
-      font-weight: 600;
-    }
+        h1 {
+            color: #0d5c3d;
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 16px;
+        }
 
-    .subtitle {
-      text-align: center;
-      color: #666;
-      margin-bottom: 25px;
-      font-size: 0.95em;
-    }
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
 
-    .canvas-wrapper {
-      background: #f8f8f8;
-      border: 4px solid #00974f;
-      border-radius: 16px;
-      padding: 15px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 12px rgba(0, 151, 79, 0.15);
-    }
+        .section-title {
+            color: #333;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 24px;
+        }
 
-    .canvas-info {
-      background: rgba(0, 151, 79, 0.08);
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 12px;
-      text-align: center;
-      color: #00974f;
-      font-size: 0.9em;
-      font-weight: 500;
-    }
+        .steps {
+            margin-bottom: 24px;
+        }
 
-    canvas {
-      display: block;
-      width: 100%;
-      height: 250px;
-      background: white;
-      border-radius: 10px;
-      cursor: crosshair;
-      touch-action: none;
-      border: 2px dashed #e0e0e0;
-    }
+        .step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
 
-    .button-group {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 15px;
-    }
+        .step-number {
+            background-color: #0d5c3d;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 25%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-right: 16px;
+        }
 
-    button {
-      flex: 1;
-      min-width: calc(50% - 6px);
-      padding: 16px 20px;
-      border: none;
-      border-radius: 12px;
-      font-size: 1em;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
+        .step-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            margin-right: 12px;
+            color: #0d5c3d;
+        }
 
-    .btn-clear {
-      background: #f5f5f5;
-      color: #333;
-      border: 2px solid #e0e0e0;
-    }
+        .step-text {
+            color: #0d5c3d;
+            line-height: 1.5;
+        }
 
-    .btn-clear:hover {
-      background: #e8e8e8;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-      border-color: #d0d0d0;
-    }
+        .step-text strong {
+            font-weight: 600;
+        }
 
-    .btn-download {
-      background: #00974f;
-      color: white;
-      border: 2px solid #00974f;
-    }
+        .info-box {
+            background-color: #d1f2eb;
+            border-left: 4px solid #0d5c3d;
+            padding: 16px;
+            margin-bottom: 32px;
+            border-radius: 4px;
+        }
 
-    .btn-download:hover {
-      background: #007a3f;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 25px rgba(0, 151, 79, 0.4);
-      border-color: #007a3f;
-    }
+        .info-title {
+            color: #0d5c3d;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
 
-    .footer {
-      text-align: center;
-      color: #999;
-      font-size: 0.85em;
-      padding: 12px;
-      background: #f9f9f9;
-      border-radius: 8px;
-    }
+        .info-text {
+            color: #0d5c3d;
+            font-size: 14px;
+            line-height: 1.5;
+        }
 
-    .toast {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: white;
-      color: #333;
-      padding: 16px 24px;
-      border-radius: 12px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-      font-weight: 500;
-      z-index: 1000;
-      animation: slideIn 0.3s ease;
-      border-left: 4px solid #00974f;
-    }
+        .button-container {
+            text-align: center;
+            margin-bottom: 24px;
+        }
 
-    .toast.error {
-      border-left-color: #e74c3c;
-    }
+        .btn-primary {
+            background-color: #0d5c3d;
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-    @keyframes slideIn {
-      from { transform: translateX(400px); opacity: 0; }
-      to   { transform: translateX(0); opacity: 1; }
-    }
+        .btn-primary:hover {
+            background-color: #0a4830;
+        }
 
-    @keyframes slideOut {
-      from { transform: translateX(0); opacity: 1; }
-      to   { transform: translateX(400px); opacity: 0; }
-    }
-  </style>
+        .footer {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 32px 24px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Captura de Firma Digital</h1>
-    <p class="subtitle">Aplicación profesional de firmas</p>
-    
-    <div class="canvas-wrapper">
-      <div class="canvas-info">📱 Dibuja con tu dedo o mouse</div>
-      <canvas id="signature"></canvas>
+    <div class="container">
+        <h1>Registro de Asistencia</h1>
+        
+        <p class="subtitle">
+            Bienvenido. Aquí podrás registrar tu asistencia a la capacitación asignada.
+        </p>
+
+        <p class="section-title">Antes de continuar:</p>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <svg class="step-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                </svg>
+                <span class="step-text">Primero realiza tu <strong>firma digital</strong>.</span>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <svg class="step-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <span class="step-text">Guarda la <strong>imagen de tu firma</strong> en tu dispositivo.</span>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <svg class="step-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <span class="step-text">Luego la cargarás en el formulario de asistencia.</span>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <div class="info-title">Nota importante:</div>
+            <div class="info-text">
+                La firma digital es obligatoria para completar tu registro. Asegúrate de guardar la imagen antes de continuar al formulario.
+            </div>
+        </div>
+
+        
+        <div class="button-container">
+            <button class="btn-primary" onclick="location.href='firma.html'">Comenzar Registro</button>
+        </div>
+
+        <div class="footer">
+            Sistema de Registro de Asistencia a Capacitaciones
+        </div>
     </div>
-
-    <div class="button-group">
-      <button class="btn-clear" onclick="clearCanvas()">🗑️ Limpiar</button>
-      <button class="btn-download" onclick="downloadSignature()">📥 Descargar JPG</button>
-    </div>
-
-    <div class="footer">
-      📄 Tu firma se descargará en formato JPG con fondo blanco
-    </div>
-  </div>
-
-  <script>
-    const canvas = document.getElementById('signature');
-    const ctx = canvas.getContext('2d');
-    let drawing = false;
-    let isEmpty = true;
-
-    function resizeCanvas() {
-      const wrapper = canvas.parentElement;
-      const rect = wrapper.getBoundingClientRect();
-      const imageData = isEmpty ? null : canvas.toDataURL();
-      canvas.width = rect.width - 30;
-      canvas.height = window.innerWidth < 600 ? 200 : 250;
-
-      ctx.lineWidth = 3;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.strokeStyle = '#000000';
-
-      if (imageData) {
-        const img = new Image();
-        img.onload = () => ctx.drawImage(img, 0, 0);
-        img.src = imageData;
-      }
-    }
-
-    function showToast(message, type = 'success') {
-      const toast = document.createElement('div');
-      toast.className = `toast ${type}`;
-      toast.textContent = message;
-      document.body.appendChild(toast);
-      setTimeout(() => {
-        toast.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => toast.remove(), 300);
-      }, 3000);
-    }
-
-    canvas.addEventListener('mousedown', startDrawing);
-    canvas.addEventListener('mouseup', stopDrawing);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseleave', stopDrawing);
-
-    canvas.addEventListener('touchstart', handleTouchStart);
-    canvas.addEventListener('touchmove', handleTouchMove);
-    canvas.addEventListener('touchend', stopDrawing);
-
-    function startDrawing(e) {
-      drawing = true;
-      isEmpty = false;
-      ctx.beginPath();
-      const rect = canvas.getBoundingClientRect();
-      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
-    }
-
-    function stopDrawing() {
-      drawing = false;
-      ctx.beginPath();
-    }
-
-    function draw(e) {
-      if (!drawing) return;
-      e.preventDefault();
-      const rect = canvas.getBoundingClientRect();
-      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
-    }
-
-    function handleTouchStart(e) {
-      e.preventDefault();
-      drawing = true;
-      isEmpty = false;
-      const touch = e.touches[0];
-      const rect = canvas.getBoundingClientRect();
-      ctx.beginPath();
-      ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
-    }
-
-    function handleTouchMove(e) {
-      if (!drawing) return;
-      e.preventDefault();
-      const touch = e.touches[0];
-      const rect = canvas.getBoundingClientRect();
-      ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
-    }
-
-    function clearCanvas() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.beginPath();
-      isEmpty = true;
-      showToast('✅ Firma borrada', 'success');
-    }
-
-    function downloadSignature() {
-      if (isEmpty) {
-        showToast('❌ Por favor dibuja tu firma primero', 'error');
-        return;
-      }
-
-      const tempCanvas = document.createElement('canvas');
-      tempCanvas.width = canvas.width;
-      tempCanvas.height = canvas.height;
-      const tempCtx = tempCanvas.getContext('2d');
-
-      tempCtx.fillStyle = '#FFFFFF';
-      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-      tempCtx.drawImage(canvas, 0, 0);
-
-      tempCanvas.toBlob(blob => {
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.download = 'Firma.jpg';
-        link.href = url;
-        link.click();
-        URL.revokeObjectURL(url);
-
-        showClosingScreen();
-      }, 'image/jpeg', 0.95);
-    }
-
-    function showClosingScreen() {
-      const overlay = document.createElement('div');
-      overlay.style = `
-        position:fixed;top:0;left:0;width:100vw;height:100vh;
-        background:rgba(0,0,0,0.7);display:flex;flex-direction:column;
-        justify-content:center;align-items:center;z-index:2000;
-        color:white;text-align:center;padding:20px;font-size:1.4em;
-      `;
-
-      overlay.innerHTML = `
-        <p>✔ La firma se descargó correctamente</p>
-        <p>Esta página se cerrará en <span id="timer">5</span> segundos.</p>
-        <button id="closeBtn" style="
-          margin-top:20px;padding:12px 26px;background:#00974f;
-          color:white;border:none;border-radius:10px;font-size:1em;
-          cursor:pointer;
-        ">Cerrar ahora</button>
-      `;
-
-      document.body.appendChild(overlay);
-
-      document.getElementById("closeBtn").onclick = () => window.close();
-
-      let counter = 5;
-      const interval = setInterval(() => {
-        counter--;
-        document.getElementById("timer").textContent = counter;
-        if (counter === 0) {
-          clearInterval(interval);
-          window.close(); // Solo funciona si página fue abierta desde JS
-        }
-      }, 1000);
-    }
-
-    window.addEventListener('load', resizeCanvas);
-    window.addEventListener('resize', resizeCanvas);
-  </script>
 </body>
 </html>
