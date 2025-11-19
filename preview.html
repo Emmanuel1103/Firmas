@@ -99,22 +99,21 @@
 
   <div class="instructions">
     <b>Instrucciones generales:</b><br>
-    Presiona el botón <b>"Descargar Firma"</b> y el archivo se guardará en tu dispositivo.
+    Presiona el botón <b>"Descargar Firma"</b> para guardar la imagen en tu dispositivo.
     <br><br>
     📱 En <b>iOS</b>, mantén presionada la imagen y selecciona <b>"Guardar en Fotos"</b>.
     <br><br>
-    <b>¡Recuerda que necesitarás esta firma para completar el formulario de asistencia!<b/>
+    ¡Recuerda que necesitarás esta firma para completar el formulario de asistencia!
   </div>
 
   <a id="download-link" download="Firma.jpg">
-    <button class="btn btn-download">Descargar Firma (PC,ANDRIOD)</button>
+    <button class="btn btn-download">Descargar Firma (PC, ANDROID)</button>
   </a>
 
-  <button class="btn btn-back" onclick="window.location.href='firma.html'">
+  <button class="btn btn-back" onclick="window.location.href='firmas.html'">
     Volver a firmar
   </button>
 
-  <!-- NUEVO BOTÓN: VOLVER AL FORM -->
   <button class="btn btn-return-form" onclick="volverAlFormulario()">
     Llenar formulario de asistencia
   </button>
@@ -122,13 +121,22 @@
 </div>
 
 <script>
-const params = new URLSearchParams(window.location.search);
-const imgData = params.get("img");
+// Recuperar la firma desde localStorage
+const imgData = localStorage.getItem("firma");
 
+// Si no hay firma, evitar pantalla vacía
+if (!imgData) {
+  alert("No se encontró la firma. Por favor, vuelve a generarla.");
+  window.location.href = "firmas.html";
+}
+
+// Asignar imagen al preview
 document.getElementById("signature-img").src = imgData;
+
+// Asignar imagen al botón de descarga
 document.getElementById("download-link").href = imgData;
 
-// Cambia la URL por la URL del formulario que quieras devolver
+// Enviar al formulario
 function volverAlFormulario() {
   window.location.href = "https://forms.office.com/r/Y587tcMmyY";
 }

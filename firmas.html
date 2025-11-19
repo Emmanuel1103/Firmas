@@ -139,7 +139,7 @@ function clearCanvas() {
   empty = true;
 }
 
-// Convert → go to preview flow
+// Convert → Save to localStorage → redirect
 function processSignature() {
   if (empty) {
     alert("Por favor, dibuja tu firma primero.");
@@ -157,7 +157,11 @@ function processSignature() {
 
   const img = finalCanvas.toDataURL("image/jpeg", 0.95);
 
-  window.location.href = "preview.html?img=" + encodeURIComponent(img);
+  // Guardar en localStorage
+  localStorage.setItem("firma", img);
+
+  // Redirigir sin parámetros
+  window.location.href = "preview.html";
 }
 </script>
 
