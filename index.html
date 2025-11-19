@@ -126,10 +126,6 @@
       border-color: #007a3f;
     }
 
-    button:active {
-      transform: translateY(0);
-    }
-
     .footer {
       text-align: center;
       color: #999;
@@ -154,69 +150,18 @@
       border-left: 4px solid #00974f;
     }
 
-    .toast.success {
-      border-left-color: #00974f;
-    }
-
     .toast.error {
       border-left-color: #e74c3c;
     }
 
     @keyframes slideIn {
-      from {
-        transform: translateX(400px);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
+      from { transform: translateX(400px); opacity: 0; }
+      to   { transform: translateX(0); opacity: 1; }
     }
 
     @keyframes slideOut {
-      from {
-        transform: translateX(0);
-        opacity: 1;
-      }
-      to {
-        transform: translateX(400px);
-        opacity: 0;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .container {
-        padding: 20px;
-      }
-
-      h1 {
-        font-size: 1.6em;
-      }
-
-      button {
-        min-width: 100%;
-        padding: 14px;
-      }
-
-      canvas {
-        height: 200px;
-      }
-
-      .toast {
-        right: 15px;
-        left: 15px;
-        top: 15px;
-      }
-    }
-
-    @media (max-width: 400px) {
-      h1 {
-        font-size: 1.4em;
-      }
-
-      canvas {
-        height: 180px;
-      }
+      from { transform: translateX(0); opacity: 1; }
+      to   { transform: translateX(400px); opacity: 0; }
     }
   </style>
 </head>
@@ -226,25 +171,17 @@
     <p class="subtitle">Aplicación profesional de firmas</p>
     
     <div class="canvas-wrapper">
-      <div class="canvas-info">
-        📱 Dibuja con tu dedo o mouse
-      </div>
+      <div class="canvas-info">📱 Dibuja con tu dedo o mouse</div>
       <canvas id="signature"></canvas>
     </div>
 
     <div class="button-group">
-      <button class="btn-clear" onclick="clearCanvas()">
-        <span>🗑️</span>
-        <span>Limpiar</span>
-      </button>
-      <button class="btn-download" onclick="downloadSignature()">
-        <span>📥</span>
-        <span>Descargar JPG</span>
-      </button>
+      <button class="btn-clear" onclick="clearCanvas()">🗑️ Limpiar</button>
+      <button class="btn-download" onclick="downloadSignature()">📥 Descargar JPG</button>
     </div>
 
     <div class="footer">
-      <p>📄 Tu firma se descargará en formato JPG con fondo blanco</p>
+      📄 Tu firma se descargará en formato JPG con fondo blanco
     </div>
   </div>
 
@@ -254,53 +191,41 @@
     let drawing = false;
     let isEmpty = true;
 
-    // Configurar tamaño del canvas
     function resizeCanvas() {
       const wrapper = canvas.parentElement;
       const rect = wrapper.getBoundingClientRect();
-      
-      // Guardar el contenido actual si existe
       const imageData = isEmpty ? null : canvas.toDataURL();
-      
       canvas.width = rect.width - 30;
       canvas.height = window.innerWidth < 600 ? 200 : 250;
-      
-      // Restaurar configuración
+
       ctx.lineWidth = 3;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.strokeStyle = '#000000';
-      
-      // Restaurar contenido si había
+
       if (imageData) {
         const img = new Image();
-        img.onload = function() {
-          ctx.drawImage(img, 0, 0);
-        };
+        img.onload = () => ctx.drawImage(img, 0, 0);
         img.src = imageData;
       }
     }
 
-    // Mostrar notificación
     function showToast(message, type = 'success') {
       const toast = document.createElement('div');
       toast.className = `toast ${type}`;
       toast.textContent = message;
       document.body.appendChild(toast);
-      
       setTimeout(() => {
         toast.style.animation = 'slideOut 0.3s ease';
         setTimeout(() => toast.remove(), 300);
       }, 3000);
     }
 
-    // Eventos para mouse
     canvas.addEventListener('mousedown', startDrawing);
     canvas.addEventListener('mouseup', stopDrawing);
     canvas.addEventListener('mousemove', draw);
     canvas.addEventListener('mouseleave', stopDrawing);
 
-    // Eventos para touch (móviles)
     canvas.addEventListener('touchstart', handleTouchStart);
     canvas.addEventListener('touchmove', handleTouchMove);
     canvas.addEventListener('touchend', stopDrawing);
@@ -321,15 +246,11 @@
     function draw(e) {
       if (!drawing) return;
       e.preventDefault();
-      
       const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      
-      ctx.lineTo(x, y);
+      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
       ctx.stroke();
       ctx.beginPath();
-      ctx.moveTo(x, y);
+      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
     }
 
     function handleTouchStart(e) {
@@ -345,16 +266,12 @@
     function handleTouchMove(e) {
       if (!drawing) return;
       e.preventDefault();
-      
       const touch = e.touches[0];
       const rect = canvas.getBoundingClientRect();
-      const x = touch.clientX - rect.left;
-      const y = touch.clientY - rect.top;
-      
-      ctx.lineTo(x, y);
+      ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
       ctx.stroke();
       ctx.beginPath();
-      ctx.moveTo(x, y);
+      ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
     }
 
     function clearCanvas() {
@@ -370,33 +287,61 @@
         return;
       }
 
-      // Crear canvas temporal con fondo blanco
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = canvas.width;
       tempCanvas.height = canvas.height;
       const tempCtx = tempCanvas.getContext('2d');
 
-      // Fondo blanco
       tempCtx.fillStyle = '#FFFFFF';
       tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-
-      // Dibujar la firma encima
       tempCtx.drawImage(canvas, 0, 0);
 
-      // Convertir a JPG y descargar
-      tempCanvas.toBlob(function(blob) {
+      tempCanvas.toBlob(blob => {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
-        link.download = 'Firma-' + "cedula" + '.jpg';
+        link.download = 'Firma.jpg';
         link.href = url;
         link.click();
         URL.revokeObjectURL(url);
-        
-        showToast('✅ Firma descargada correctamente', 'success');
+
+        showClosingScreen();
       }, 'image/jpeg', 0.95);
     }
 
-    // Inicializar
+    function showClosingScreen() {
+      const overlay = document.createElement('div');
+      overlay.style = `
+        position:fixed;top:0;left:0;width:100vw;height:100vh;
+        background:rgba(0,0,0,0.7);display:flex;flex-direction:column;
+        justify-content:center;align-items:center;z-index:2000;
+        color:white;text-align:center;padding:20px;font-size:1.4em;
+      `;
+
+      overlay.innerHTML = `
+        <p>✔ La firma se descargó correctamente</p>
+        <p>Esta página se cerrará en <span id="timer">5</span> segundos.</p>
+        <button id="closeBtn" style="
+          margin-top:20px;padding:12px 26px;background:#00974f;
+          color:white;border:none;border-radius:10px;font-size:1em;
+          cursor:pointer;
+        ">Cerrar ahora</button>
+      `;
+
+      document.body.appendChild(overlay);
+
+      document.getElementById("closeBtn").onclick = () => window.close();
+
+      let counter = 5;
+      const interval = setInterval(() => {
+        counter--;
+        document.getElementById("timer").textContent = counter;
+        if (counter === 0) {
+          clearInterval(interval);
+          window.close(); // Solo funciona si página fue abierta desde JS
+        }
+      }, 1000);
+    }
+
     window.addEventListener('load', resizeCanvas);
     window.addEventListener('resize', resizeCanvas);
   </script>
