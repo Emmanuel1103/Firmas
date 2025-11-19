@@ -61,7 +61,6 @@
 
   .btn-next { background: #32a150; }
   .btn-next:hover { background: #27843f; }
-
 </style>
 </head>
 
@@ -71,7 +70,7 @@
   <h1>Captura tu Firma</h1>
 
   <div class="canvas-wrapper">
-    <canvas id="signature"></canvas>
+    <canvas id="signature" touch-action="none"></canvas>
   </div>
 
   <button class="btn btn-clear" onclick="clearCanvas()">Limpiar</button>
@@ -84,10 +83,10 @@ const ctx = canvas.getContext("2d");
 let drawing = false;
 let empty = true;
 
+// Ajustar tamaño del canvas
 function resize() {
   const data = empty ? null : canvas.toDataURL();
-  const w = canvas.clientWidth;
-  canvas.width = w;
+  canvas.width = canvas.clientWidth;
   canvas.height = 250;
 
   ctx.lineWidth = 3;
@@ -100,17 +99,31 @@ function resize() {
     img.src = data;
   }
 }
-resize();
-window.onresize = resize;
 
-// Drawing
+// Esperar para evitar borrado en móvil
+setTimeout(resize, 200);
+window.addEventListener("resize", resize);
+
+// PC
 canvas.onmousedown = e => start(e);
 canvas.onmousemove = e => draw(e);
 canvas.onmouseup = () => end();
 
-canvas.addEventListener("touchstart", e => start(e.touches[0]));
-canvas.addEventListener("touchmove", e => draw(e.touches[0]));
-canvas.addEventListener("touchend", () => end());
+// Móvil
+canvas.addEventListener("touchstart", e => {
+  e.preventDefault();
+  start(e.touches[0]);
+}, { passive: false });
+
+canvas.addEventListener("touchmove", e => {
+  e.preventDefault();
+  draw(e.touches[0]);
+}, { passive: false });
+
+canvas.addEventListener("touchend", e => {
+  e.preventDefault();
+  end();
+}, { passive: false });
 
 function start(e) {
   drawing = true;
@@ -120,26 +133,23 @@ function start(e) {
   ctx.moveTo(e.clientX - r.left, e.clientY - r.top);
 }
 
-function end() {
-  drawing = false;
-  ctx.beginPath();
-}
-
 function draw(e) {
   if (!drawing) return;
-  e.preventDefault();
   const r = canvas.getBoundingClientRect();
   ctx.lineTo(e.clientX - r.left, e.clientY - r.top);
   ctx.stroke();
 }
 
-// Clear button
+function end() {
+  drawing = false;
+  ctx.beginPath();
+}
+
 function clearCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   empty = true;
 }
 
-// Convert → Save to localStorage → redirect
 function processSignature() {
   if (empty) {
     alert("Por favor, dibuja tu firma primero.");
@@ -160,7 +170,7 @@ function processSignature() {
   // Guardar en localStorage
   localStorage.setItem("firma", img);
 
-  // Redirigir sin parámetros
+  // Redirigir
   window.location.href = "preview.html";
 }
 </script>
